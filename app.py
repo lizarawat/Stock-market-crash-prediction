@@ -206,7 +206,17 @@ def apply_plot_theme(fig, height=350, **kwargs):
 # =========================================================
 @st.cache_resource
 def load_bundle():
-    return joblib.load('crash_bundle.pkl')
+    import os
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    candidates = [
+        os.path.join(base_dir, 'crash_bundle.pkl'),
+        'crash_bundle.pkl',
+        os.path.join(base_dir, 'data', 'processed', 'crash_bundle.pkl')
+    ]
+    for p in candidates:
+        if os.path.exists(p):
+            return joblib.load(p)
+    raise FileNotFoundError(f"Could not locate crash_bundle.pkl in candidates: {candidates}")
 
 bundle = load_bundle()
 models = bundle['models']
